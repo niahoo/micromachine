@@ -14,7 +14,7 @@ class Module extends Ar {
          */
 
 		$try1 = $conf->app_root . '/modules/' . $module_dir;
-		$try2 = MMROOT . '/modules/' . $module_dir;
+		$try2 = dirname(dirname(dirname(__FILE__))) . '/modules/' . $module_dir;
 
         if(is_dir($try1)) {
             $module->set('dir', $try1);
