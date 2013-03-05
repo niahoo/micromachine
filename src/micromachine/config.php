@@ -26,7 +26,14 @@ class Config extends Ar {
         $modules = array();
         $to_load = $this->get_default('load_modules',array());
         foreach($to_load as $key => $value) {
-            $modules[strtolower($module_name)] = Module::load($module_name, $this);
+            if (is_numeric($key)) {
+                $module_name = $value;
+                $modules[strtolower($module_name)] = Module::load($module_name, $this);
+            } else {
+                $module_name = $key;
+                $force_dir = $value;
+                $modules[strtolower($module_name)] = Module::load($module_name, $this, $force_dir);
+            }
         }
         $this->set('modules', $modules);
     }
