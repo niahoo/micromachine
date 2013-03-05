@@ -4,13 +4,14 @@ namespace micromachine;
 
 class micromachine {
 
+    public static $root = __DIR__;
+
     static function app(Config $conf) {
 
         // On utilise PHP-Router pour gérer les routes
         // on crée un objet routeur qu'on va faire passer à la config
         // la config va trouver les routes dans chaque module
 
-        public $root = dirname(dirname(dirname(__FILE__)))
 
         $router = new \Router();
         $router->setBasePath($conf->get_default('base_path', ''));

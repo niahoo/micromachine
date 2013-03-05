@@ -14,7 +14,7 @@ class Module extends Ar {
          */
 
 		$try1 = $conf->app_root . '/modules/' . $module_name;
-		$try2 = micromachine::root . '/modules/' . $module_name;
+		$try2 = micromachine::$root . '/modules/' . $module_name;
         if (null === $dir) {
             if(is_dir($try1)) {
                 $module->set('dir', $try1);
@@ -29,7 +29,6 @@ class Module extends Ar {
 
         try {
             $module->get('dir');
-        }
         } catch (InvalidKeyException $e) {
             throw new \InvalidArgumentException("$module_name module dir not found");
         }
