@@ -13,11 +13,13 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "chrismcmacken/phptools": "dev-master"
     },
     "autoload": {
         "psr-0": {
-            "micromachine": "src/"
-        }
+            "": "src/"
+        },
+        "files": ["src/utils.php"]
     }
 }
