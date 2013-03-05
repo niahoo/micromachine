@@ -10,7 +10,7 @@ class micromachine {
         // on crée un objet routeur qu'on va faire passer à la config
         // la config va trouver les routes dans chaque module
 
-
+        public $root = dirname(dirname(dirname(__FILE__)))
 
         $router = new \Router();
         $router->setBasePath($conf->get_default('base_path', ''));
