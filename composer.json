@@ -1,0 +1,23 @@
+{
+    "name": "micromachine/micromachine",
+    "type": "library",
+    "description": "Component Loader for PHP",
+    "keywords": ["framework","mvc","modules","loader"],
+    "homepage": "http://github.com/niahoo/micromachine",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "niahoo osef",
+            "email": "dev@ooha.in",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "micromachine": "src/"
+        }
+    }
+}

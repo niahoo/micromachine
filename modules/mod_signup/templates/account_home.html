@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block main %}
+
+    {% block account_top %}
+    {% endblock %}
+
+    {% block account_password_change %}
+        {# PASSWORD #}
+        {#@todo check si on a bien une identity email, sinon proposer
+            d'en créer une au lieu du formulaire de changement de mot de
+            passe #}
+        <h2>{% trans "Change your password" %}</h2>
+        <form method="POST" action="{{ url('mod_signup_password_change') }}">
+            <label for="mod_signup_password_current">{% trans "Mot de passe actuel" %}</label>
+            <input  id="mod_signup_password_current" type="password" name="signup_current_password"/>
+
+            <label for="mod_signup_password_new">{% trans "Nouveau mot de passe" %}</label>
+            <input  id="mod_signup_password_new" type="password" name="signup_new_password"/>
+
+            <label for="mod_signup_password_new_confirm">{% trans "Confirmez le nouveau mot de passe" %}</label>
+            <input  id="mod_signup_password_new_confirm" type="password" name="signup_confirm_password"/>
+
+            <input type="submit" value="{% trans 'Envoyer' %}"/>
+        </form>
+    {% endblock %}
+
+    {% block account_profiles_display %}
+        {# PROFILES #}
+
+        {% if c.auth.max_profiles > 1 %}
+            {% include 'multi_profiles_home.html' %}
+        {% else %}
+            {% include 'single_profile_home.html' %}
+        {% endif %}
+    {% endblock %}
+{% endblock %}

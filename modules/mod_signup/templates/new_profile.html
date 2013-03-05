@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block flash %}
+    {% for err in flash('errors') %}
+        <p class="flash_error">{{ err }}</p>
+    {% endfor %}
+{% endblock %}
+
+{% block main %}
+
+<p>
+    Please override this template ( 'new_profile.html' ) in your
+    main module and write a profile form creation:
+</p>
+<pre>
+    &lt;form action="{{ '{{' }} form_url {{ '}}' }}" method="POST"&gt;
+
+    &lt;/form&gt;
+</pre>
+<p>
+    All the fields for the profile must be wrapped in a 'profile' POST
+    field.
+</p>
+<pre>
+    &lt;form action="{{ '{{' }} form_url {{ '}}' }}" method="POST"&gt;
+        &lt;label for="fruit"&gt;What's your preferred fruit ?&lt;/label&gt;
+        &lt;input id="fruit" type="text" name="profile[preferred_fruit]" value=""/&gt;
+    &lt;/form&gt;
+</pre>
+<p>
+    You can limit the fields to import in your config file. Define
+    the signup.profiles_auth_fields key with a list of the fields
+    names in a string.
+</p>
+<pre>
+    'signup.profiles_auth_fields' => 'name,age,gender,likes,address'
+</pre>
+<p>Then, write a file 'model_profile.php' in your main module with
+    this content:
+</p>
+<pre>
+    &lt;?php class Model_Profile extends RedBean_SimpleModel {} ?>
+</pre>
+<p>Then you can add <a href="http://www.redbeanphp.com/manual/models_and_fuse">custom validation</a>.</p>
+{% endblock %}

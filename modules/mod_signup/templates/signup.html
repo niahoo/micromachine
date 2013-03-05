@@ -1,0 +1,22 @@
+{% extends 'base.html' %} 
+
+{% block flash %}
+	{% for err in flash('errors') %}
+		<p class="flash_error">{{ err }}</p>
+	{% endfor %}
+{% endblock %}
+
+{% block main %}
+<form action="{{ url("mod_signup_signup_process") }}" method="POST" id="mod_signup_signup_form">
+	<label for="mod_signup_signup_email_field">{% trans "Your Email" %}</label>
+	<input type="email" name="signup_email" id="mod_signup_signup_email_field"/>
+
+	<label for="mod_signup_signup_password_field">{% trans "Create Password" %}</label>
+    <input type="password" name="signup_password" id="mod_signup_signup_password_field"/>
+
+    <label for="mod_signup_signup_password2_field">{% trans "Confirm Password" %}</label>
+    <input type="password" name="signup_confirm" id="mod_signup_signup_password2_field"/>    
+
+	<input type="submit" name="signup_submit" id="mod_signup_signup_submit" value="{% trans 'Signup!' %}"/>
+</form>
+{% endblock %}
