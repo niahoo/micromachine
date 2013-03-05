@@ -25,7 +25,7 @@ class Config extends Ar {
     private function load_modules() {
         $modules = array();
         $to_load = $this->get_default('load_modules',array());
-        foreach($to_load as $module_name) {
+        foreach($to_load as $key => $value) {
             $modules[strtolower($module_name)] = Module::load($module_name, $this);
         }
         $this->set('modules', $modules);

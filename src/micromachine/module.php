@@ -4,7 +4,7 @@ namespace micromachine;
 
 class Module extends Ar {
 
-    static function load($module_dir, $conf) {
+    static function load($module_name, $conf, $dir=null) {
 
         $module = new self(array('conf' => $conf));
         /**
@@ -13,20 +13,28 @@ class Module extends Ar {
          * de micromachine
          */
 
-		$try1 = $conf->app_root . '/modules/' . $module_dir;
-		$try2 = dirname(dirname(dirname(__FILE__))) . '/modules/' . $module_dir;
+		$try1 = $conf->app_root . '/modules/' . $module_name;
+		$try2 = micromachine::root . '/modules/' . $module_name;
+        if (null === $dir) {
+            if(is_dir($try1)) {
+                $module->set('dir', $try1);
+            }
+            elseif(is_dir($try2)) {
+                $module->set('dir', $try2);
+            }
+        }
+        elseif (is_dir($dir)) {
+            $module->set('dir', $dir);
+        }
 
-        if(is_dir($try1)) {
-            $module->set('dir', $try1);
+        try {
+            $module->get('dir');
         }
-        elseif(is_dir($try2)) {
-            $module->set('dir', $try2);
-        }
-        else {
-            throw new \InvalidArgumentException("$module_dir module dir not found");
+        } catch (InvalidKeyException $e) {
+            throw new \InvalidArgumentException("$module_name module dir not found");
         }
 
-        $module->set('name', basename($module_dir));
+        $module->set('name', $module_name);
 
         $module->check_main_file();
         $module->set('has_init_method', false);
