@@ -11,7 +11,8 @@ class ControllerHandler {
     // jetter un coup d'oeil dans un cadre de développement/débug
     public $_context;
 
-    public function __construct($controller, $action='index') {
+    public function __construct($controller, $action=null) {
+        if (null === $action) { $action = 'index'; }
         $this->controller = $controller;
         $this->action = $action;
     }
@@ -27,7 +28,7 @@ class ControllerHandler {
         // paramètres supplémentaires
         $args = array_merge(
             array($this->_context),
-            $this->_context->route->parameters
+            $this->_context->route->params
         );
 
         $this->_context->require_part('controller', $this->controller);
