@@ -4,7 +4,8 @@ namespace micromachine;
 
 class Ar {
 
-
+    protected static $instances = array();
+    protected static $ciID = 1000;
 
     protected $state = array();
     protected $__CLASS__ = __CLASS__;
@@ -19,7 +20,17 @@ class Ar {
         return $this;
     }
 
+    protected function new_instance_ID() {
+        $id = Ar::$ciID;
+        Ar::$ciID += 1;
+        return $id;
+    }
+
     public function export($full=false) {
+        $this->set('__ar_instance_ID', $this->get_default('__ar_instance_ID', $this->new_instance_ID()));
+        if (isset(Ar::$instances[$this->__ar_instance_ID])) {
+            return '__RECURSION__';
+        }
         if (true === $full) {
             //@todo removetimelimit stuff;
             set_time_limit(2);
@@ -221,7 +232,7 @@ class Ar {
         // si on est déjà passés
         $export = array();
         //*/
-        throw new \Exception("
+        $STOP =  new \Exception("
 
             Apparemment on a une boucle infinie …
 
@@ -229,13 +240,12 @@ class Ar {
             d'un import il n'y a pas encore la possibilité de re-set
             les objets récursifs.
         ");
+        // throw $STOP;
+
         //*/
-        r($this->get_default('_full_export_mark', false) , 'exporting me');
-        $this->set('_full_export_mark', true);
         foreach($this->state as $k => $v) {
-            r($k);
-            if(is_a($v, '\micromachine\Ar') && $v->get_default('_full_export_mark', false) === false) {
-                $export[$k] = $v->full_export();
+            if(is_a($v, '\micromachine\Ar')) {
+                $export[$k] = $v->export(true);
             }
             else {
                 $export[$k] = $v;
