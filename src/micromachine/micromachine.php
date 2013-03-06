@@ -4,8 +4,6 @@ namespace micromachine;
 
 class micromachine {
 
-    public static $root = __DIR__;
-
     static function app(Config $conf) {
 
         // On utilise PHP-Router pour gérer les routes

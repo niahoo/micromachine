@@ -19,6 +19,6 @@
         "psr-0": {
             "micromachine": "src/"
         },
-        "files": ["src/micromachine/utils.php"]
+        "files": ["src/loader.php","src/micromachine/utils.php"]
     }
 }
