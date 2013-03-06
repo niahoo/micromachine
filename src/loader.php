@@ -1,7 +1,5 @@
 <?php
 
-echo "lo";
-
 namespace micromachine;
 
 class micromachine_loader {
