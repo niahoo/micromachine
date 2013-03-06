@@ -33,8 +33,6 @@ class micromachine {
 
         $context->init_modules();
 
-        $context->fire('before_context_release');
-
         // return $handler;
 
         return new self($context);
@@ -78,7 +76,7 @@ class micromachine {
             'session' => $session
         ));
 
-        $this->_context->fire('before_handler_release');
+        $this->_context->fire('handler_release');
 
         $handler->set_context($this->_context);
 

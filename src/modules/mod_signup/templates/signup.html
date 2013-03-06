@@ -1,4 +1,4 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
 {% block flash %}
 	{% for err in flash('errors') %}
@@ -15,7 +15,7 @@
     <input type="password" name="signup_password" id="mod_signup_signup_password_field"/>
 
     <label for="mod_signup_signup_password2_field">{% trans "Confirm Password" %}</label>
-    <input type="password" name="signup_confirm" id="mod_signup_signup_password2_field"/>    
+    <input type="password" name="signup_confirm" id="mod_signup_signup_password2_field"/>
 
 	<input type="submit" name="signup_submit" id="mod_signup_signup_submit" value="{% trans 'Signup!' %}"/>
 </form>

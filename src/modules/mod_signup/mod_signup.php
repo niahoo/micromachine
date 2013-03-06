@@ -12,9 +12,12 @@ class mod_signup {
     const role_admin = 1;
 
     public static function init(\micromachine\Context $context) {
-        $context->set('auth', new self($context));
         self::$signup_salt = $context->conf->get('signup.salt');
         self::$hash_identity_fun = $context->conf->get('signup.identity_hash');
+    }
+
+    public static function event_handler_release($context) {
+        $context->set('auth', new self($context));
         $context->require_part('model','Model_Account');
         $context->require_part('model','Model_Identity');
     }
