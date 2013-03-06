@@ -11,7 +11,7 @@ class ControllerHandler {
     // jetter un coup d'oeil dans un cadre de développement/débug
     public $_context;
 
-    public function __construct($controller, $action=DEFAULT_CONTROLLER_ACTION_NAME) {
+    public function __construct($controller, $action='index') {
         $this->controller = $controller;
         $this->action = $action;
     }

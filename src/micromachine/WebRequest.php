@@ -1,6 +1,8 @@
 <?php
 
 // Class taken from https://github.com/chrismcmacken/phptools
+// And added to micromachine namespace
+namespace micromachine;
 
 /*
  * Copyright (c) 2012 individual committers of the code

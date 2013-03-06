@@ -2,7 +2,7 @@
 
 namespace micromachine;
 
-class Default_Session_Handler extends Ar {
+class SessionHandler extends Ar {
 
     const session_sub = 'mm';
 

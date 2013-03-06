@@ -42,7 +42,7 @@ function arw(array $data) {
 }
 
 // creates a Controllerhandler
-function ch($controller, $action=DEFAULT_CONTROLLER_ACTION_NAME) {
+function ch($controller, $action=null) {
     return new \micromachine\ControllerHandler($controller, $action);
 }
 

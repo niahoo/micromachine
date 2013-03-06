@@ -11,26 +11,29 @@ class micromachine {
         // la config va trouver les routes dans chaque module
 
 
-        $router = new \Router();
+        $router = new \AltoRouter();
         $router->setBasePath($conf->get_default('base_path', ''));
 
         $conf->set_routes($router);
 
-        $route = $router->matchCurrentRequest();
-        if($route === false) {
+        $_route = $router->match();
+        if($_route === false) {
             rx('@todo self::handle_404()');
+        }
+        else {
+            $route = arw($_route);
         }
 
         // création de l'objet request à l'aide de phptools
 
-        $request = new \WebRequest($conf->get_default('destroySuperglobals', false));
+        $request = new \micromachine\WebRequest($conf->get_default('destroySuperglobals', false));
 
         // On récupère le handler de la route choisie
-        $handler = $route->getTarget();
+        $handler = $route->target;
         // on charge l'objet qui gère la session
         //@todo permettre à la config de définir une autre classe
 
-        $session = new Default_Session_Handler;
+        $session = new SessionHandler;
 
 
 
@@ -40,8 +43,8 @@ class micromachine {
         $context = new Context(array(
             'conf' => $conf         // App configuration
           , 'request' => $request   // Webrequest object
-          , 'router' => $router     // Php-Router router
-          , 'route' => $route       // Php-Router matched route
+          , 'router' => $router     // AltoRouter router
+          , 'route' => $route       // AltoRouter route info
           , 'session' => $session   // session handler
         ));
 
