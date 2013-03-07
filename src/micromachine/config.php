@@ -4,10 +4,19 @@ namespace micromachine;
 
 class Config extends Ar {
 
-
-
     static function load($vars=array()) {
+
         $conf = new self($vars);
+        $KEY = $conf->get_default('CONF_KEY', false);
+        if ($KEY) {
+            $key_exists;
+            $key_store = apc_fetch('micromachine_conf_key', $key_exists);
+            if($key_exists && $key_store === $KEY) {
+                $conf_cache = apc_fetch('micromachine_conf');
+                $conf_cache->set('load_mode','APC');
+                return $conf_cache;
+            }
+        }
         //@todo ici récup la conf AVEC les modules chargés depuis APC
         // mais il faudra donc fournir une fonction au contexte pour inclure
         // un module qui n'aurait pas d'initialisation car celui-ci ne
@@ -19,6 +28,11 @@ class Config extends Ar {
         $conf->load_mods_to_init();
         $conf->load_libs();
         $conf->load_templates_dirs();
+        if ($KEY) {
+            apc_store('micromachine_conf_key', $KEY);
+            apc_store('micromachine_conf', $conf);
+        }
+        $conf->set('load_mode','file');
         return $conf;
     }
 
