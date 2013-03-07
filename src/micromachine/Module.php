@@ -13,9 +13,12 @@ class Module extends Ar {
          * de micromachine
          */
 
+        $tries = array();
+
 		$try1 = $conf->app_root . '/modules/' . $module_name;
 		$try2 = micromachine_loader::root . '/modules/' . $module_name;
         if (null === $dir) {
+            $tries = array($try1, $try2);
             if(is_dir($try1)) {
                 $module->set('dir', $try1);
             }
@@ -24,13 +27,15 @@ class Module extends Ar {
             }
         }
         elseif (is_dir($dir)) {
+            $tries = array($dir);
             $module->set('dir', $dir);
         }
 
         try {
             $module->get('dir');
         } catch (InvalidKeyException $e) {
-            throw new \InvalidArgumentException("$module_name module dir not found");
+            $dirlist = implode(', ', $tries);
+            throw new \InvalidArgumentException("$module_name module dir not found, looked in $dirlist");
         }
 
         $module->set('name', $module_name);
