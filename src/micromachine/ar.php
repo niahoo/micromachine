@@ -28,18 +28,29 @@ class Ar {
 
     public function export($full=false) {
         $this->set('__ar_instance_ID', $this->get_default('__ar_instance_ID', $this->new_instance_ID()));
-        if (isset(Ar::$instances[$this->__ar_instance_ID])) {
-            return '__RECURSION__';
-        }
-        if (true === $full) {
-            //@todo removetimelimit stuff;
-            set_time_limit(2);
-            return $this->full_export();
-            set_time_limit(30);
+
+        if (in_array($this->__ar_instance_ID, Ar::$instances)) {
+            return array('__RECURSION__', $this->__ar_instance_ID);
         }
         else {
-            return $this->state;
+            array_push(Ar::$instances, $this->__ar_instance_ID);
         }
+        $export = array();
+        if (true === $full) {
+            foreach($this->state as $k => $v) {
+                if(is_a($v, '\micromachine\Ar')) {
+                    $export[$k] = $v->export(true);
+                }
+                else {
+                    $export[$k] = $v;
+                }
+            }
+        }
+        else {
+            $export = $this->state;
+        }
+        ksort($export);
+        return $export;
     }
 
     public function get($key) {
@@ -221,37 +232,6 @@ class Ar {
             $classified[$v][$key] = $item;
         }
         return $classified;
-    }
-
-    private function full_export() {
-        // comme exporte, sauf dans le cas ou l'élément de this->state
-        // est aussi une instance de Ar alors on appelle récursivement
-        // full_export
-        // dans le cas ou deux Ar se contiennent mutuellement, pour
-        // éviter la boucle_infine, on utilise une variable pour voir
-        // si on est déjà passés
-        $export = array();
-        //*/
-        $STOP =  new \Exception("
-
-            Apparemment on a une boucle infinie …
-
-            Cette méthode ne doit pas être utilisée, car dans le cas
-            d'un import il n'y a pas encore la possibilité de re-set
-            les objets récursifs.
-        ");
-        // throw $STOP;
-
-        //*/
-        foreach($this->state as $k => $v) {
-            if(is_a($v, '\micromachine\Ar')) {
-                $export[$k] = $v->export(true);
-            }
-            else {
-                $export[$k] = $v;
-            }
-        }
-        return $export;
     }
 
     public function to_json() {

@@ -4,24 +4,11 @@ namespace micromachine;
 
 class micromachine {
 
-    static function app(Config $conf, $cache_key=null) {
-        // On regarde si on a un context basé sur la même conf
-        // sauvegardé dans le cache
-        if (null != $cache_key) {
-            if (apc_exists('micromachine_key')) {
-                $mmkey = apc_fetch('micromachine_key');
-                if ($mmkey === $cache_key) {
-                    $context = apc_fetch('micromachine_context');
-                    $context->set('loading_mode','APC');
-                    return new self($context);
-                }
-            }
-        }
-
-        return self::app_config_file($conf, $cache_key);
+    static function app(Config $conf) {
+        return self::app_config_file($conf);
     }
 
-    static function app_config_file(Config $conf, $cache_key=null) {
+    static function app_config_file(Config $conf) {
 
 
         // On utilise PHP-Router pour gérer les routes
@@ -51,16 +38,6 @@ class micromachine {
         // 5. Initialisation des modules
 
         $context->init_modules();
-
-        // mise en cache
-
-        // rx(v(arw(array(new Ar(array()),new Ar(array()), new Ar(array()))))->export(true));
-
-        r($context->export(true));
-
-
-
-        apc_add('micromachine_context', $context);
 
         // return $handler;
         return new self($context);
