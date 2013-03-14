@@ -8,7 +8,7 @@ class Ar {
     protected static $ciID = 1000;
 
     protected $state = array();
-    protected $__CLASS__ = __CLASS__;
+    public $__CLASS__ = __CLASS__;
 
     public function __construct(array $state) {
        $this->state = $state;

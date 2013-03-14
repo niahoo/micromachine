@@ -69,10 +69,17 @@ class mod_twig {
     }
 }
 
+// Cette classe permet à Twig de récupérer des clefs dans un Ar en
+// gardant la dot-syntax de Twig Cela permet de récupérer les clefs
+// d'un Ar dans un template, mais pas d'appeler les fonctions de la
+// classe qui étend Ar. Pour cela, il faut d'abord appeler .f dans le
+// template
 class  mod_twig_ar_caller {
-    private  $target;
+    private $ar;
+    private $target;
 
     public function __construct(\micromachine\Ar $ar) {
+        $this->ar = $ar;
         $this->target = new \micromachine\Ar_Default_Getter($ar);
     }
 
@@ -83,5 +90,21 @@ class  mod_twig_ar_caller {
         }
         return $value;
     }
+    public function f() {
+        return new mod_twig_ar_function_call($this->ar);
+    }
 }
 
+// cette classe prend un Ar et permet d'appeler les fonction définies
+// dans la classe qui étend Ar
+class mod_twig_ar_function_call {
+    private $ar;
+
+    public function __construct(\micromachine\Ar $ar) {
+        $this->ar = $ar;
+    }
+
+    public function __call($key,$args) {
+        return call_user_func_array(array($this->ar, $key), $args);
+    }
+}
