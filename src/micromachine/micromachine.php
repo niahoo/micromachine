@@ -80,10 +80,10 @@ class micromachine {
             return $this->handle_no_route_found();
         }
         else {
-
+            $route = arw($_route);
             $handler = $route->target;
 
-            $this->_context->set('route', arw($_route));
+            $this->_context->set('route', $route);
             $this->_context->fire('handler_release');
 
             $handler->set_context($this->_context);
