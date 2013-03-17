@@ -29,10 +29,14 @@ class Context extends Ar {
     public function init_modules() {
         $mods_to_init = $this->conf->mods_to_init;
         foreach($mods_to_init as $module) {
-            $this->require_part('module', $module);
-            $module::init($this);
+            $this->init_module($module);
         }
 
+    }
+
+    public function init_module($module) {
+        $this->require_part('module', $module);
+        $module::init($this);
     }
 
     public function __call($method, $args)

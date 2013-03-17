@@ -77,7 +77,7 @@ class ControllerHandler {
         }
         elseif(is_string($action_response)) {
             $response = new Response($action_response, $headers=array());
-            return $this->output($response); // ! RETURN
+            return self::output($response); // ! RETURN
         }
 
 
@@ -93,7 +93,7 @@ class ControllerHandler {
     }
 
 
-    public function output($response) {
+    public static function output($response) {
         $response->send_headers();
         $response->output();
         return true;

@@ -53,15 +53,6 @@ class micromachine {
 
     public function process() {
 
-        $router = $this->_context->router;
-
-        $_route = $router->match();
-        if($_route === false) {
-            rx('@todo self::handle_404()');
-        }
-        else {
-            $route = arw($_route);
-        }
 
         // création de l'objet request à l'aide de phptools après le
         // match de route au cas où on veuille détruire les
@@ -69,23 +60,53 @@ class micromachine {
         $request = new \micromachine\WebRequest($this->_context->conf->get_default('destroySuperglobals', false));
 
         // On récupère le handler de la route choisie
-        $handler = $route->target;
+
 
         // on charge l'objet qui gère la session
         //@todo permettre à la config de définir une autre classe
         $session = new SessionHandler;
 
+        $router = $this->_context->router;
+
+
         $this->_context->import(array(
             'request' => $request,
-            'route' => $route,
             'session' => $session
         ));
 
-        $this->_context->fire('handler_release');
+        $_route = $router->match();
 
-        $handler->set_context($this->_context);
+        if($_route === false) {
+            return $this->handle_no_route_found();
+        }
+        else {
 
-        $handler->process();
+            $handler = $route->target;
+
+            $this->_context->set('route', arw($_route));
+            $this->_context->fire('handler_release');
+
+            $handler->set_context($this->_context);
+
+            $handler->process();
+        }
+
+
+
+
+
+    }
+
+    private function handle_no_route_found() {
+        // check si le module errorpages est chargé et on le charge
+        // sinon
+        $this->_context->conf->load_module('mod_errorpage');
+        $this->_context->init_module('mod_errorpage');
+
+        $response = $this->_context->errorpages->render(404);
+        $response->send_headers();
+        $response->output();
+
 
     }
 

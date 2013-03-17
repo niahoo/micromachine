@@ -33,6 +33,7 @@ class Config extends Ar {
             apc_store('micromachine_conf', $conf);
         }
         $conf->set('load_mode','file');
+        $conf->set_base_URL();
         return $conf;
     }
 
@@ -42,16 +43,34 @@ class Config extends Ar {
         foreach($to_load as $key => $value) {
             if (is_numeric($key)) {
                 $module_name = $value;
-                $modules[strtolower($module_name)] = Module::load($module_name, $this);
+                $force_dir = null;
             } else {
                 $module_name = $key;
                 $force_dir = $value;
-                $modules[strtolower($module_name)] = Module::load($module_name, $this, $force_dir);
             }
+            $modules[strtolower($module_name)] = Module::load($module_name, $this, $force_dir);
         }
         $this->set('modules', $modules);
     }
 
+    public function module_loaded($name) {
+        return isset($this->modules[$name]);
+    }
+
+    public function load_module($name, $keyname=-1) {
+        if (is_numeric($keyname)) {
+            $module_name = $name;
+            $force_dir = null;
+        } else {
+            $module_name = $keyname;
+            $force_dir = $name;
+        }
+        if (! $this->module_loaded($module_name)) {
+            $old = $this->modules;
+            $old[strtolower($module_name)] = Module::load($module_name, $this, $force_dir);
+            $this->set('modules', $old);
+        }
+    }
     //@todo refactor avec controllers, models, libs, exceptions
     private function load_controllers() {
         $controllers = array();
@@ -75,6 +94,14 @@ class Config extends Ar {
             $exceptions = array_merge($exceptions, $module->get_exceptions());
         }
         $this->set('exceptions', new Ar($exceptions));
+    }
+
+    private function set_base_URL() {
+        $this->set('base_URL',
+            $this->get_default('protocol', 'http://')
+            . $this->get_default('host_name', $_SERVER['HTTP_HOST'])
+            . $this->get_default('base_path', '')
+        );
     }
 
     private function load_libs() {
