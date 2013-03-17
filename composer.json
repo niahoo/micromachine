@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "niahoo/altorouter": "dev-master"
+        "niahoo/altorouter": "dev-named-only"
     },
     "autoload": {
         "psr-0": {
