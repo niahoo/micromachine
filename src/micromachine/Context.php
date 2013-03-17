@@ -49,7 +49,7 @@ class Context extends Ar {
         foreach ($this->conf->modules as $module) {
             if(in_array($event_name, $module->events)) {
                   $this->conf->require_module_file($module->name);
-                  return call_user_func('\\' . "{$module->name}::event_$event_name", $this, $data);
+                  call_user_func('\\' . "{$module->name}::event_$event_name", $this, $data);
             }
         }
     }
