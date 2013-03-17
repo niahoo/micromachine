@@ -26,5 +26,5 @@
         "twig/twig": "v1.12.2"
       , "twig/extensions": "1.0.*@dev"
       , "swiftmailer/swiftmailer": "4.3.*@dev"
-    },
+    }
 }
