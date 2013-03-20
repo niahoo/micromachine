@@ -75,7 +75,6 @@ class micromachine {
         ));
 
         $_route = $router->match();
-
         if($_route === false) {
             return $this->handle_no_route_found();
         }
