@@ -46,9 +46,14 @@ class micromachine {
     }
 
     public $_context;
+    private $noroute_handler = null;
 
     public function __construct($context) {
         $this->_context = $context;
+    }
+
+    public function set_no_route_handler (/* callable */ $fun) {
+        $this->noroute_handler = $fun;
     }
 
     public function process() {
@@ -87,24 +92,27 @@ class micromachine {
 
             $handler->set_context($this->_context);
 
-            $handler->process();
+            return $handler->process();
         }
-
-
-
-
 
     }
 
-    private function handle_no_route_found() {
-        // check si le module errorpages est chargé et on le charge
-        // sinon
-        $this->_context->conf->load_module('mod_errorpage');
-        $this->_context->init_module('mod_errorpage');
+    public function handle_no_route_found() {
+        if ($this->noroute_handler !== null) {
+            $fun = $this->noroute_handler;
+            return $fun($this->_context);
+        }
+        else {
 
-        $response = $this->_context->errorpages->render(404);
-        $response->send_headers();
-        $response->output();
+            //@todo check si le module errorpages est chargé et on le
+            // charge uniquement s'il ne l'est pas
+            $this->_context->conf->load_module('mod_errorpage');
+            $this->_context->init_module('mod_errorpage');
+
+            $response = $this->_context->errorpages->render(404);
+            $response->send_headers();
+            $response->output();
+        }
 
 
     }
