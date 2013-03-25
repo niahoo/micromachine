@@ -15,8 +15,8 @@ class Module extends Ar {
 
         $tries = array();
 
-		$try1 = $conf->app_root . '/modules/' . $module_name;
-		$try2 = micromachine_loader::root . '/modules/' . $module_name;
+        $try1 = $conf->app_root . '/modules/' . $module_name;
+        $try2 = micromachine_loader::root . '/modules/' . $module_name;
         if (null === $dir) {
             $tries = array($try1, $try2);
             if(is_dir($try1)) {
@@ -64,34 +64,34 @@ class Module extends Ar {
     public function get_controllers() {
         $base_path = $this->dir;
         $search_mask = $base_path . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . '*.php';
-        $gather = glob($search_mask);
+        $gather = self::glob($search_mask);
         return self::filenames_to_keys($gather);
     }
 
     public function get_models() {
         $base_path = $this->dir;
         $search_mask = $base_path . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . '*.php';
-        $gather = glob($search_mask);
+        $gather = self::glob($search_mask);
         return self::filenames_to_keys($gather);
     }
 
     public function get_exceptions() {
         $base_path = $this->dir;
         $search_mask = $base_path . DIRECTORY_SEPARATOR . 'exceptions' . DIRECTORY_SEPARATOR . '*.php';
-        $gather = glob($search_mask);
+        $gather = self::glob($search_mask);
         return self::filenames_to_keys($gather);
     }
 
     public function get_libs() {
         $base_path = $this->dir;
         $search_mask = $base_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '*';
-        $gather = glob($search_mask);
+        $gather = self::glob($search_mask);
         return self::filenames_to_keys($gather, $with_ext=true);
     }
 
     public function get_templates_dirs() {
-        $gather = glob($this->dir . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
-        $gather = array_merge($gather, glob($this->dir . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "*" . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR));
+        $gather = self::glob($this->dir . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
+        $gather = array_merge($gather, self::glob($this->dir . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "*" . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR));
         if (is_dir($this->dir . DIRECTORY_SEPARATOR . "templates"))
             array_unshift($gather, $this->dir . DIRECTORY_SEPARATOR . "templates");
         return $gather;
@@ -150,5 +150,12 @@ class Module extends Ar {
             }
         }
         $this->set('events', $events);
+    }
+
+    // fonction utile qui zappe les erreurs de path sur certains
+    // hébergeurs
+    private static function glob($mask, $opts=0) {
+        $result = glob($mask,$opts);
+        return $result === false ? array() : $result;
     }
 }
