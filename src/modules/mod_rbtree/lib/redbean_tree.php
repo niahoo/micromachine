@@ -62,19 +62,24 @@ class Redbean_Tree {
         return $this->add_meta($found);
     }
 
+    private function move_node($parent, $child) {
+        r($child);
+    }
+
     public function append_child($parent, $child) {
 
         if($child->id !== 0) {
-            throw new Exception('le noeud existe déjà, il faut donc déplacer un sous arbre');
+            return $this->move_node($parent, $child);
         }
 
         $table = $this->bt;
-        $prb = $parent->right_bound();
         $left = self::left;
         $right = self::right;
 
-        R::begin();
         try {
+            R::begin();
+            $prb = R::getCell("SELECT $right FROM $table
+                                WHERE id = ? ", array($parent->id));
             R::exec("UPDATE $table SET $right = $right + 2
                      WHERE $right >= $prb");
             R::exec("UPDATE $table SET $left = $left + 2
