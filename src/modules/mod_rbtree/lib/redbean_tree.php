@@ -10,20 +10,24 @@ class Redbean_Tree {
         $this->bt = $bean_type;
     }
 
+    public function load($id) {
+        $found = $found = R::load($this->bt, $id);
+        return $this->add_meta($found);
+    }
+
     public function findOne($sql=null, $values = array()) {
         $found = R::findOne($this->bt, $sql, $values);
-        if(!is_null($found)) {            
-            $found->setMeta('tree', $this);
-        }
-        return $found;
+        return $this->add_meta($found);
     }
 
     public function find($sql=null, $values = array()) {
         $found = R::find($this->bt, $sql, $values);
-        foreach($found as $f) {
-            $f->setMeta('tree', $this);
-        }
-        return $found;
+        return $this->add_meta($found);
+    }
+
+    public function dispense() {
+        $bean = R::dispense($this->bt);
+        return $this->add_meta($bean);
     }
 
     public function root() {
@@ -47,7 +51,7 @@ class Redbean_Tree {
         $found = $this->find(
             self::left  . ' > ? AND ' .
             self::right . ' < ? AND ' .
-            self::level . ' = ?' 
+            self::level . ' = ?'
             ,
             array(
                 $bean->left_bound() ,
@@ -55,7 +59,7 @@ class Redbean_Tree {
                 $bean->level() + 1
             )
         );
-        return $found;
+        return $this->add_meta($found);
     }
 
     public function append_child($parent, $child) {
@@ -74,17 +78,34 @@ class Redbean_Tree {
             R::exec("UPDATE $table SET $right = $right + 2
                      WHERE $right >= $prb");
             R::exec("UPDATE $table SET $left = $left + 2
-                     WHERE $left >= $prb");                     
+                     WHERE $left >= $prb");
             $child[self::left] = $prb;
             $child[self::right] = $prb + 1;
             $child[self::level] = $parent->level() + 1;
+            $this->add_meta($child);
             R::store($child);
             R::commit();
         } catch(Exception $e) {
             R::rollback();
             throw $e;
         }
+    }
 
-
+    private function add_meta($beans) {
+        if(is_array($beans)) {
+            foreach($beans as $bean) {
+                $bean->setMeta('tree', $this);
+            }
+        }
+        elseif(is_object($beans)) {
+             $beans->setMeta('tree', $this);
+        }
+        elseif (null === $beans) {
+            // null is ok, it's a not found bean
+        }
+        else {
+            throw new InvalidArgumentException('Wrong data');
+        }
+        return $beans;
     }
 }
