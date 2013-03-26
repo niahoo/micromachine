@@ -18,6 +18,9 @@ class mod_redbean {
         $username = $context->conf->get_default('rb.username', null);
         $password = $context->conf->get_default('rb.password', null);
         $freeze = $context->conf->get_default('rb.freeze', false);
+        if ($freeze) {
+            R::freeze();
+        }
         R::setup($dsn,$username,$password);
 
         // 3. Context injection
