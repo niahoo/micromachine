@@ -55,20 +55,22 @@ class mod_redbean {
         $timefmt = $context->conf->get_default('rb.log.filetimeformat','Y-m-d-H');
         $logbase = 'rb-log-' . v(new DateTime())->format($timefmt);
         $logfile = "$logdir/$logbase.sql";
-        $buffer = mod_redbean::log_header();
+        $buffer = '';
         foreach ($logger->getLogs() as $logline) {
             $buffer .=  "\n" . $logline . "\n\n";
         }
 
         //@todo utiliser flock pour locker le fichier
-        $f = fopen($logfile, 'a');
-        fwrite($f, $buffer);
-        fclose($f);
+        if (strlen($buffer)) {
+            $f = fopen($logfile, 'a');
+            fwrite($f, mod_redbean::log_header().$buffer);
+            fclose($f);
+        }
     }
 
     public static function log_header() {
         return str_pad(
-            '-- QUERY LOG -- ' . date('d-M-Y::H:i:s') . ' ---',
+            "\n".'-- QUERY LOG -- ' . date('d-M-Y::H:i:s') . ' ---',
         70, '-');
     }
 }
