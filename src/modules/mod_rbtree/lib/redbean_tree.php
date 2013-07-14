@@ -96,6 +96,42 @@ class Redbean_Tree {
         }
     }
 
+    public function trash ($node) {
+        // supprime un sous-arbre complet à partir du noeud $node
+        // inclus
+        if($node->id === 0) {
+            throw new InvalidArgumentException('Non existent node');
+        }
+        else {
+            $left = self::left;
+            $right = self::right;
+            $node_left = $node[self::left];
+            $node_right = $node[self::right];
+            $table = $this->bt;
+            // Après la suppression, on va décaler vers la gauche tous
+            // les éléments. On les décale tous de la largeur du node
+            // supprimé + 1
+            // (on ajoute 1 pour récupérer la distance entre le node
+            // supprimé et son voisin de droite qui vient le
+            // remplacer)
+            $left_move = $node_right - $node_left + 1;
+            try {
+                R::begin();
+                $prb = R::getCell("DELETE FROM $table
+                                    WHERE $left >= ? AND $right <= ?", array($node_left, $node_right));
+                R::exec("UPDATE $table SET $right = $right - $left_move
+                         WHERE $right >= $node_left");
+                R::exec("UPDATE $table SET $left = $left - $left_move
+                         WHERE $left > $node_left");
+                R::commit();
+            } catch(Exception $e) {
+                R::rollback();
+                throw $e;
+            }
+
+        }
+    }
+
     private function add_meta($beans) {
         if(is_array($beans)) {
             foreach($beans as $bean) {
