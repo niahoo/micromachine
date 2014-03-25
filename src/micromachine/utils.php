@@ -7,8 +7,8 @@ function attr_getter($attr_name) {
     };
 }
 
-function switch_domain($domain) {
-    return "http://$domain".$_SERVER['REQUEST_URI'];
+function switch_domain($domain,$protocol='http') {
+    return "$protocol://$domain".$_SERVER['REQUEST_URI'];
 }
 
 function Ymd($time=null) {
@@ -144,9 +144,9 @@ function slugify($text) {
 }
 
 if(!function_exists('apc_exists')) {
-    function apc_exists($keys) {
-        $result;
-        apc_fetch($keys, $result);
-        return $result;
-    }
+function apc_exists($keys) {
+    $result;
+    apc_fetch($keys, $result);
+    return $result;
+}
 }

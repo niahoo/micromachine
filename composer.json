@@ -1,8 +1,8 @@
 {
     "name": "micromachine/micromachine",
     "type": "library",
-    "description": "Component Loader for PHP",
-    "keywords": ["framework","mvc","modules","loader"],
+    "description": "Glue",
+    "keywords": ["glue"],
     "homepage": "http://github.com/niahoo/micromachine",
     "license": "MIT",
     "authors": [
@@ -14,19 +14,12 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "monolog/monolog": "1.4.*@dev",
         "niahoo/altorouter": "dev-named-only"
     },
     "autoload": {
         "psr-0": {
             "micromachine": "src/"
         },
-        "files": ["src/loader.php","src/micromachine/utils.php"]
-    },
-    "suggest": {
-        "twig/twig": "v1.12.2"
-      , "twig/extensions": "1.0.*@dev"
-      , "swiftmailer/swiftmailer": "4.3.*@dev"
-      , "knplabs/gaufrette": "0.2.*@dev"
+        "files": ["src/micromachine/utils.php"]
     }
 }
