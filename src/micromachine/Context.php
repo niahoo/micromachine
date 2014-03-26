@@ -20,14 +20,15 @@ class Context extends Ar {
     }
 
     public function load_module($name) {
-        $rc = new \ReflectionClass($name);
+        $mod = "\\$name\\$name";
+        $rc = new \ReflectionClass($mod);
         $methods = $rc->getMethods();
         foreach ($methods as $m) {
             if('init' === $m->name) {
-                $name::init($this);
+                $mod::init($this);
             }
             if (preg_match('/^event_(.*)/', $m->name, $matches)) {
-                $this->observe($matches[1],array($name,$m->name)); // Must be a static function
+                $this->observe($matches[1],array($mod,$m->name)); // Must be a static function
             }
         }
     }
