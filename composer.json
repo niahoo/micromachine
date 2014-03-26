@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "micromachine\\": "src/",
+            "micromachine\\": "src/"
         },
         "files": ["src/utils.php"]
     }
