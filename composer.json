@@ -17,8 +17,8 @@
         "niahoo/altorouter": "dev-named-only"
     },
     "autoload": {
-        "psr-0": {
-            "micromachine": "src/"
+        "psr-4": {
+            "micromachine\\": "src/",
         },
         "files": ["src/utils.php"]
     }

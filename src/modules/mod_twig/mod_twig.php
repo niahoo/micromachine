@@ -1,6 +1,6 @@
 <?php
 
-namespace \micromachine\modules\mod_twig;
+namespace micromachine\modules\mod_twig;
 
 class mod_twig {
 
