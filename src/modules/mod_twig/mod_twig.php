@@ -4,14 +4,13 @@ namespace micromachine\modules\mod_twig;
 
 class mod_twig {
 
-
     public static function init(\micromachine\Context $context) {
         $c = $context->conf;
-        Twig_Autoloader::register();
+        \Twig_Autoloader::register();
         $cache_enabled = $c->get_default('twig.cache', false);
         $twig_opts = array();
 
-        $tpl_dirs = $c->templates_dirs;
+        $tpl_dirs = $context->templates_dirs;
 
         if($cache_enabled) {
             $default_cache_dir = $c->app_root . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'twig';
@@ -25,9 +24,9 @@ class mod_twig {
 
 
 
-        $loader = new Twig_Loader_Filesystem($tpl_dirs);
+        $loader = new \Twig_Loader_Filesystem($tpl_dirs);
 
-        $twig = new Twig_Environment($loader, $twig_opts);
+        $twig = new \Twig_Environment($loader, $twig_opts);
 
         // on ajoute le context à twig pour pouvoir y accéder depuis
         // les templates
@@ -37,7 +36,7 @@ class mod_twig {
 		// On ajoute quelques fonctions à Twig
 
         if($twig_opts['debug']) {
-            $twig->addExtension(new Twig_Extension_Debug());
+            $twig->addExtension(new \Twig_Extension_Debug());
         }
 
         // - notre extension avec le parseur d'url, helpers pour forms, session flash
@@ -45,9 +44,9 @@ class mod_twig {
         $twig->addExtension(new Mod_Twig_Extension($context));
 
         // - Markdown
-        require_once mkpath(__DIR__ , 'lib','extensionMarkdown-v1.0.1o','markdown.php');
-        $twig->addFilter('mk', new Twig_Filter_Function('Markdown'));
-        $twig->addFilter('markdown', new Twig_Filter_Function('Markdown'));
+        require_once mkpath(__DIR__ , 'lib','Markdown-v1.0.1o','markdown.php');
+        $twig->addFilter('mk', new \Twig_Filter_Function('Markdown'));
+        $twig->addFilter('markdown', new \Twig_Filter_Function('Markdown'));
 
         // on ajoute au context l'instance de Twig_Environment sous le
         // nom de 'twig' pour y accéder directement

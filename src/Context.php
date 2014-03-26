@@ -5,11 +5,11 @@ namespace micromachine;
 class Context extends Ar {
 
     private $observers;
-    private $templates_dirs = array();
 
     public static function create($vars) {
         $c = new self($vars);
         $c->observers = new Ar(array());
+        $c->set('templates_dirs',array());
         return $c;
     }
 
@@ -22,8 +22,9 @@ class Context extends Ar {
 
     public function load_module($class) {
         Module::load($class,$this);
+        $sofar = $this->get('templates_dirs');
         $addtemplates_dirs = Module::get_templates_dirs($class);
-        $this->templates_dirs = array_merge($this->templates_dirs,$addtemplates_dirs);
+        $this->set('templates_dirs', array_merge($sofar,$addtemplates_dirs));
     }
 
     public function __call($method, $args) {

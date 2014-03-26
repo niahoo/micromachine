@@ -1,6 +1,8 @@
 <?php
 
-class Mod_Twig_Extension extends Twig_Extension {
+namespace micromachine\modules\mod_twig;
+
+class Mod_Twig_Extension extends \Twig_Extension {
 
     private $context;
 
@@ -18,11 +20,11 @@ class Mod_Twig_Extension extends Twig_Extension {
     // public function getTests () {}
     public function getFunctions () {
         return array(
-            'r' => new Twig_Function_Method($this, 'fun_r')
-          , 'url' => new Twig_Function_Method($this, 'fun_url')
-          , 'rawurl' => new Twig_Function_Method($this, 'fun_rawurl')
-          , 'flash' => new Twig_Function_Method($this, 'fun_flash')
-          , 'checked' => new Twig_Function_Method($this, 'fun_checked')
+            'r' => new \Twig_Function_Method($this, 'fun_r')
+          , 'url' => new \Twig_Function_Method($this, 'fun_url')
+          , 'rawurl' => new \Twig_Function_Method($this, 'fun_rawurl')
+          , 'flash' => new \Twig_Function_Method($this, 'fun_flash')
+          , 'checked' => new \Twig_Function_Method($this, 'fun_checked')
         );
     }
     // public function getOperators () {}
