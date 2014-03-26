@@ -10,8 +10,7 @@ class micromachine {
     static function app(Config $conf) {
         $router = new \AltoRouter();
         $router->setBasePath($conf->get_default('base_path', ''));
-        $conf->set_routes($router);
-        $context = new Context(array(
+        $context = Context::create(array(
             'conf' => $conf         // App configuration
           , 'router' => $router     // AltoRouter router
         ));
@@ -29,13 +28,10 @@ class micromachine {
     }
 
     public function process() {
-        $this->context->log->addDebug($_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_URI'].' Handler processing request');
         $request = new \micromachine\WebRequest($this->context->conf->get_default('destroySuperglobals', false));
-        $session = new SessionHandler; //@todo permettre à la config de définir une autre classe
         $router = $this->context->router;
         $this->context->import(array(
-            'request' => $request,
-            'session' => $session
+            'request' => $request
         ));
         $_route = $router->match();
         if($_route === false) {
