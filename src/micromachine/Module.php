@@ -4,7 +4,7 @@ namespace micromachine;
 
 class Module extends Ar {
 
-    static function load($module_name, $conf, $dir=null) {
+    static function load($module_name, $conf, $dir) {
 
         $module = new self(array('conf' => $conf));
         /**
@@ -13,34 +13,9 @@ class Module extends Ar {
          * de micromachine
          */
 
-        $tries = array();
-
-        $try1 = $conf->app_root . '/modules/' . $module_name;
-        $try2 = micromachine_loader::root . '/modules/' . $module_name;
-        if (null === $dir) {
-            $tries = array($try1, $try2);
-            if(is_dir($try1)) {
-                $module->set('dir', $try1);
-            }
-            elseif(is_dir($try2)) {
-                $module->set('dir', $try2);
-            }
-        }
-        elseif (is_dir($dir)) {
-            $tries = array($dir);
-            $module->set('dir', $dir);
-        }
-
-        try {
-            $module->get('dir');
-        } catch (InvalidKeyException $e) {
-            $dirlist = implode(', ', $tries);
-            throw new \InvalidArgumentException("$module_name module dir not found, looked in $dirlist");
-        }
-
+        $module->set('dir', $dir);
         $module->set('name', $module_name);
 
-        $module->check_main_file();
         $module->set('has_init_method', false);
         $module->set('events',array());
         if($module->has_main_file()) {
@@ -56,74 +31,13 @@ class Module extends Ar {
         }
     }
 
-    public function file($path) {
-        return $this->dir . $path;
-    }
-
-    //@todo refactor avec controllers, models
-    public function get_controllers() {
-        $base_path = $this->dir;
-        $search_mask = $base_path . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . '*.php';
-        $gather = self::glob($search_mask);
-        return self::filenames_to_keys($gather);
-    }
-
-    public function get_models() {
-        $base_path = $this->dir;
-        $search_mask = $base_path . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . '*.php';
-        $gather = self::glob($search_mask);
-        return self::filenames_to_keys($gather);
-    }
-
-    public function get_exceptions() {
-        $base_path = $this->dir;
-        $search_mask = $base_path . DIRECTORY_SEPARATOR . 'exceptions' . DIRECTORY_SEPARATOR . '*.php';
-        $gather = self::glob($search_mask);
-        return self::filenames_to_keys($gather);
-    }
-
-    public function get_libs() {
-        $base_path = $this->dir;
-        $search_mask = $base_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '*';
-        $gather = self::glob($search_mask);
-        return self::filenames_to_keys($gather, $with_ext=true);
-    }
-
     public function get_templates_dirs() {
-        $gather = self::glob($this->dir . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR);
-        $gather = array_merge($gather, self::glob($this->dir . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "*" . DIRECTORY_SEPARATOR . "*", GLOB_ONLYDIR));
-        if (is_dir($this->dir . DIRECTORY_SEPARATOR . "templates"))
-            array_unshift($gather, $this->dir . DIRECTORY_SEPARATOR . "templates");
+        $gather = self::glob(mkpath($this->dir, "templates", "*"), GLOB_ONLYDIR);
+        $gather = array_merge($gather, self::glob(mkpath($this->dir, "templates", "*", "*"), GLOB_ONLYDIR));
+        $tpldir = mkpath($this->dir, "templates");
+        if (is_dir($tpldir))
+            array_unshift($gather, $tpldir);
         return $gather;
-    }
-
-    public static function filenames_to_keys(array $files_paths, $with_ext=false, $dirname_levels=0) {
-        $filenames_to_keys = array();
-        foreach ($files_paths as $path) {
-            $key = '';
-            $build_path = $path;
-            for ($i = 0; $i < $dirname_levels; $i++) {
-                $build_path = dirname($build_path);
-                $key = pathinfo($build_path, PATHINFO_FILENAME) . DIRECTORY_SEPARATOR . $key;
-            }
-            $key .= pathinfo($path, PATHINFO_FILENAME);
-            if (true == $with_ext && pathinfo($path, PATHINFO_EXTENSION) != '')
-                $key .= '.' . pathinfo($path, PATHINFO_EXTENSION);
-            $filenames_to_keys[$key] = $path;
-        }
-        return $filenames_to_keys;
-    }
-
-    public function has_main_file() {
-        return is_file($this->main_file_path());
-    }
-
-    public function check_main_file() {
-        $this->set('has_main_file', $this->has_main_file());
-    }
-
-    public function main_file_path() {
-        return $this->dir . DIRECTORY_SEPARATOR . $this->name . '.php';
     }
 
     public function load_methods() {

@@ -19,8 +19,9 @@ class Response {
             header("$hname: $hvalue");
         }
         if($this->code != 200) {
+            // On envoie le code avec un header bidon
             header('X-Status-By: micromachine', true, $this->code);
-        }        
+        }
     }
 
     public function output() {
