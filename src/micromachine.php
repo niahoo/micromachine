@@ -13,6 +13,7 @@ class micromachine {
         $context = Context::create(array(
             'conf' => $conf         // App configuration
           , 'router' => $router     // AltoRouter router
+          // , 'session' => new SessionHandler
         ));
         define ('MM_RUNTIME', true);
         $context->init_modules();

@@ -36,12 +36,13 @@ class Context extends Ar {
     }
 
     public function fire($event_name, $data=null) {
-        register_shutdown_function(function()use($event_name) {
-            r("firing event $event_name");
-        });
         $handlers = $this->observers->get_default($event_name,array());
         foreach ($handlers as $fun) {
             call_user_func($fun,$this,$data);
         }
+    }
+
+    public function url($n,$ps=array()) {
+        return $this->get('router')->generate($n,$ps);
     }
 }
