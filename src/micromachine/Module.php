@@ -2,73 +2,39 @@
 
 namespace micromachine;
 
-class Module extends Ar {
+class Module {
 
-    static function load($module_name, $conf, $dir) {
-
-        $module = new self(array('conf' => $conf));
-        /**
-         * on var regarder si les modules sont trouvables dans le
-         * app_root de la conf, et sinon dans les modules de base
-         * de micromachine
-         */
-
-        $module->set('dir', $dir);
-        $module->set('name', $module_name);
-
-        $module->set('has_init_method', false);
-        $module->set('events',array());
-        if($module->has_main_file()) {
-            $module->set_events();
+    static function load($class,$context) {
+        $rc = new \ReflectionClass($class);
+        if ($rc->hasMethod('init')) {
+            $class::init($context);
         }
-
-        return $module;
-    }
-
-    public function set_routes($router) {
-        if (is_file($this->file(DIRECTORY_SEPARATOR . 'routes.php'))) {
-            include $this->file(DIRECTORY_SEPARATOR . 'routes.php');
+        if ($rc->hasMethod('map_routes')) {
+            $class::map_routes($context->get('router'),$context);
+        } elseif (is_file(mkpath(dirname($rc->getFileName()),'routes.php'))){
+            $router = $context->get('router');
+            include mkpath(dirname($rc->getFileName()),'routes.php');
+        }
+        $methods = $rc->getMethods();
+        foreach ($methods as $m) {
+            if (preg_match('/^event_(.*)/', $m->name, $matches)) {
+                $context->observe($matches[1],array($class,$m->name)); // Must be a static function
+            }
         }
     }
 
-    public function get_templates_dirs() {
-        $gather = self::glob(mkpath($this->dir, "templates", "*"), GLOB_ONLYDIR);
-        $gather = array_merge($gather, self::glob(mkpath($this->dir, "templates", "*", "*"), GLOB_ONLYDIR));
-        $tpldir = mkpath($this->dir, "templates");
+    static function get_templates_dirs($class) {
+        $rc = new \ReflectionClass($class);
+        $base_dir = dirname($rc->getFileName());
+        $gather = self::glob(mkpath($base_dir, "templates", "*"), GLOB_ONLYDIR);
+        $gather = array_merge($gather, self::glob(mkpath($base_dir, "templates", "*", "*"), GLOB_ONLYDIR));
+        $tpldir = mkpath($base_dir, "templates");
         if (is_dir($tpldir))
             array_unshift($gather, $tpldir);
         return $gather;
     }
 
-    public function load_methods() {
-        $methods = $this->get_default('methods', false);
-        if(false === $methods) {
-            // memoization
-            require_once $this->main_file_path();
-            $rc = new \ReflectionClass($this->name);
-            $methods = $rc->getMethods();
-            $this->set('methods', $methods);
-        }
-        return $methods;
-    }
-
-    private function set_events() {
-        $methods = $this->load_methods();
-        $events = array();
-        foreach ($methods as $m) {
-            if ('init' === $m->name)
-                $this->set('has_init_method', true);
-            $matches = array();
-            if (preg_match('/^event_(.*)/', $m->name, $matches)) {
-                $events[] = $matches[1];
-            }
-        }
-        $this->set('events', $events);
-    }
-
-    // fonction utile qui zappe les erreurs de path sur certains
-    // hébergeurs
-    private static function glob($mask, $opts=0) {
+    static function glob($mask, $opts=0) {
         $result = glob($mask,$opts);
         return $result === false ? array() : $result;
     }

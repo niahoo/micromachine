@@ -5,6 +5,7 @@ namespace micromachine;
 class Context extends Ar {
 
     private $observers;
+    private $templates_dirs = array();
 
     public static function create($vars) {
         $c = new self($vars);
@@ -14,23 +15,15 @@ class Context extends Ar {
 
     public function init_modules() {
         $mods = $this->conf->get_default('load_modules',array());
-        foreach($mods as $n) {
-            $this->load_module($n);
+        foreach($mods as $class) {
+            $this->load_module($class);
         }
     }
 
-    public function load_module($name) {
-        $mod = "\\$name\\$name";
-        $rc = new \ReflectionClass($mod);
-        $methods = $rc->getMethods();
-        foreach ($methods as $m) {
-            if('init' === $m->name) {
-                $mod::init($this);
-            }
-            if (preg_match('/^event_(.*)/', $m->name, $matches)) {
-                $this->observe($matches[1],array($mod,$m->name)); // Must be a static function
-            }
-        }
+    public function load_module($class) {
+        Module::load($class,$this);
+        $addtemplates_dirs = Module::get_templates_dirs($class);
+        $this->templates_dirs = array_merge($this->templates_dirs,$addtemplates_dirs);
     }
 
     public function __call($method, $args) {

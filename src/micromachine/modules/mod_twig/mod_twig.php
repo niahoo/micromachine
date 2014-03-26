@@ -1,5 +1,7 @@
 <?php
 
+namespace \micromachine\modules\mod_twig;
+
 class mod_twig {
 
 
@@ -43,7 +45,7 @@ class mod_twig {
         $twig->addExtension(new Mod_Twig_Extension($context));
 
         // - Markdown
-        $context->require_lib('Markdown', '-v1.0.1o', array('markdown.php'));
+        require_once mkpath(__DIR__ , 'lib','extensionMarkdown-v1.0.1o','markdown.php');
         $twig->addFilter('mk', new Twig_Filter_Function('Markdown'));
         $twig->addFilter('markdown', new Twig_Filter_Function('Markdown'));
 

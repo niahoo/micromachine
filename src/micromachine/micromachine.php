@@ -42,7 +42,7 @@ class micromachine {
             $handler = $route->target;
             $this->context->set('route', $route);
             $this->context->fire('handler_release');
-            $handler->setcontext($this->context);
+            $handler->set_context($this->context);
             return $handler->process();
         }
     }
