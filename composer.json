@@ -20,6 +20,6 @@
         "psr-0": {
             "micromachine": "src/"
         },
-        "files": ["src/micromachine/utils.php"]
+        "files": ["src/utils.php"]
     }
 }

@@ -31,7 +31,6 @@ class ControllerHandler {
             $this->_context->route->params
         );
 
-        $this->_context->require_part('controller', $this->controller);
         $controller = new $this->controller;
 
         // CALL STAGES BEFORE ACTION
